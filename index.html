@@ -10,30 +10,70 @@
 
 <body>
   <div id="app">
-    <video id="preview"></video>
+    <form>
+      <select v-model="activeCameraId">
+        <option v-for="camera in cameras" :value="camera.id">{{ camera.name }}</option>
+      </select>
+    </form>
+    <video ref="preview"></video>
   </div>
+  <script src="/static/javascripts/vue.min.js"></script>
   <script src="/static/javascripts/adapter.min.js"></script>
   <script src="/static/javascripts/instascan.min.js"></script>
   <script>
-    const scanner = new Instascan.Scanner({
-      video: document.getElementById('preview'),
-    });
-    scanner.addListener('scan', (content) => {
-      console.log(content);
-    });
-    Instascan.Camera.getCameras()
-      .then((cameras) => {
-        console.log(cameras);
-        if (cameras.length > 0) {
-          scanner.start(cameras[0]);
+    const app = new Vue({
+      data() {
+        return {
+          cameras: [],
+          activeCamera: null,
+          activeCameraId: null,
         }
-        else {
-          console.error('No cameras found.');
+      },
+      computed: {
+        activeCamera() {
+          return this.cameras.find((camera) => {
+            return camera.id === this.activeCameraId;
+          });
         }
-      })
-      .catch((error) => {
-        console.error(error);
-      });
+      },
+      methods: {
+        scanCaptured(content) {
+          console.log(content);
+        },
+        setCamera(camera) {
+          if (!camera) return;
+          this.scanner.start(camera);
+        },
+      },
+      watch: {
+        cameras(cameras) {
+          this.setCamera(cameras[0]);
+        },
+        activeCamera(camera) {
+          if (camera) {
+            this.setCamera(camera);
+          }
+        },
+      },
+      mounted() {
+        this.scanner = new Instascan.Scanner({
+          continuous: true,
+          video: this.$refs.preview,
+          scanPeriod: 5,
+          backgroundScan: false,
+          captureImage: false,
+        });
+        this.scanner.addListener('scan', this.scanCaptured);
+        Instascan.Camera.getCameras()
+          .then((cameras) => {
+            this.cameras = cameras;
+          })
+          .catch((error) => {
+            console.error(error);
+          });
+        console.log(this.scanner);
+      },
+    })
   </script>
 </body>
 
