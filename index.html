@@ -33,6 +33,7 @@
       computed: {
         activeCamera() {
           return this.cameras.find((camera) => {
+            console.log(camera.id === this.activeCameraId, this.activeCameraId);
             return camera.id === this.activeCameraId;
           });
         }
@@ -42,7 +43,7 @@
           console.log(content);
         },
         setCamera(camera) {
-          console.log(camera);
+          console.log('set camera', camera);
           if (camera) {
             this.scanner.start(camera);
           }
