@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+
+<body>
+  <div id="app">
+    <video id="preview"></video>
+  </div>
+  <script src="/static/javascripts/adapter.min.js"></script>
+  <script src="/static/javascripts/instascan.min.js"></script>
+  <script>
+    const scanner = new Instascan.Scanner({
+      video: document.getElementById('preview'),
+    });
+    scanner.addListener('scan', (content) => {
+      console.log(content);
+    });
+    Instascan.Camera.getCameras()
+      .then((cameras) => {
+        if (cameras.length > 0) {
+          scanner.start(cameras[0]);
+        }
+        else {
+          console.error('No cameras found.');
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  </script>
+</body>
+
+</html>
