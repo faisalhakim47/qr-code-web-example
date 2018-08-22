@@ -53,10 +53,14 @@
         cameras(cameras) {
           this.setCamera(cameras[0]);
         },
-        activeCamera(camera) {
-          if (camera) {
-            this.setCamera(camera);
-          }
+        activeCameraId(cameraId) {
+          if (!cameraId) return;
+          const camera = this.cameras.find((camera) => {
+            console.log('search camera', camera.id === cameraId, cameraId);
+            return camera.id === cameraId;
+          });
+          if (!camera) return;
+          this.setCamera(camera);
         },
       },
       mounted() {
