@@ -42,8 +42,10 @@
           console.log(content);
         },
         setCamera(camera) {
-          if (!camera) return;
-          this.scanner.start(camera);
+          console.log(camera);
+          if (camera) {
+            this.scanner.start(camera);
+          }
         },
       },
       watch: {
@@ -57,6 +59,7 @@
         },
       },
       mounted() {
+        this.$watch(() => console.log(this.activeCameraId));
         this.scanner = new Instascan.Scanner({
           continuous: true,
           video: this.$refs.preview,
